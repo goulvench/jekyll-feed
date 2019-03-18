@@ -71,7 +71,16 @@ module JekyllFeed
 
     # Path to feed.xml template file
     def feed_source_path
-      @feed_source_path ||= File.expand_path "feed.xml", __dir__
+      return @feed_source_path if @feed_source_path
+
+      feed_template_source = File.expand_path "feed.xml", @site.config["layouts_dir"]
+      if feed_template_source && File.exists?(feed_template_source)
+        @feed_source_path = feed_template_source
+        Jekyll.logger.info "Jekyll Feed:", "Feed template used: #{feed_template_source}"
+      else
+        @feed_source_path = File.expand_path "feed.xml", __dir__
+      end
+      @feed_source_path
     end
 
     def feed_template
